@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { InjectModel } from 'sequelize-typescript';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class UserService {
@@ -10,6 +10,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.userRepository.create(createUserDto);
+
     return user;
   }
 
@@ -19,16 +20,36 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findAll();
+    const user = await this.userRepository.findOne({ where: { id } });
+    return user;
+  }
+
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
     return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    const candidate = await this.userRepository.findOne({ where: { id } });
+
+    if (!candidate) {
+      return 'Такого пользователя не существует';
+    }
+
     const user = await this.userRepository.findAll();
+
     return user;
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} user`;
+    const candidate = await this.userRepository.findOne({ where: { id } });
+
+    if (!candidate) {
+      return 'Такого пользователя не существует';
+    }
+
+    const user = await this.userRepository.findAll();
+
+    return user;
   }
 }

@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,8 +21,10 @@ import { User } from './user/entities/user.entity';
       database: process.env.POSTGRES_DATABASE,
       models: [User],
       autoLoadModels: true,
+      logging: false,
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
