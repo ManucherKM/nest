@@ -4,12 +4,17 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectModel } from '@nestjs/mongoose'
 import { User } from './entities/user.entity'
 import { Model } from 'mongoose'
+import bcrypt from 'bcrypt'
 
 @Injectable()
 export class UserService {
 	constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
 
 	async create(createUserDto: CreateUserDto) {
+		const { password, ...args } = createUserDto
+
+		// const passwordHash =
+
 		const createdUser = await this.UserModel.create(createUserDto)
 		return createdUser
 	}
@@ -35,5 +40,13 @@ export class UserService {
 	async remove(id: string) {
 		const res = await this.UserModel.deleteOne({ _id: id })
 		return res
+	}
+
+	private async encryption(password: string) {
+		return await bcrypt.hash(password, 10)
+	}
+
+	private async checkPassword(password: string, hash: string) {
+		return await bcrypt.compare(password, hash)
 	}
 }
